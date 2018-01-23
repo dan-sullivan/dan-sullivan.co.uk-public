@@ -1,0 +1,54 @@
+.marg-10-top {
+  margin-top: 10%;
+}
+
+.infra-svg-0 {
+ padding: 0.5em; 
+}
+
+.head-blocks {
+  display: flex;
+  flex-direction: column;
+}
+
+.infra-block {
+  order: 2
+}
+.name-block {
+  order: 1;
+  float: left;
+}
+.name {
+  font-size: 16vw;
+}
+.typed-p {
+  min-height: 28.5vw;
+}
+.typed, .typed-cursor {
+  font-size: 6vw;
+}
+
+// Larger than mobile - switch div order for side by side infra and name
+@media ("min-width: 420px") {
+  .head-blocks {
+    display: flex;
+    flex-direction: row;
+  }
+  .infra-block {
+    order: 1;
+  }
+  .name-block {
+    order: 2;
+    float: right;
+  }
+  .name {
+    font-size: 6.3vw;
+  }
+  .typed-p {
+    min-height: 7.5vw;
+  }
+  .typed, .typed-cursor {
+    font-size: 2.5vw;
+  }
+}
+

@@ -1,0 +1,265 @@
+
+.fill-none {
+  fill: none;
+}
+.fill-002b36 {
+  fill: $base03;
+}
+.fill-073642 {
+  fill: $base02;
+}
+.fill-273134 {
+  fill: $base02;
+}
+.fill-39474b {
+  fill: $base02;
+}
+.fill-3f4f54 {
+  fill: $base02;
+}
+.fill-586e75 {
+  fill: $base01;
+}
+.fill-93a1a6 {
+  fill: $base00;
+} 
+.fill-e15343 {
+  fill: $orange;
+}
+
+.stroke-none {
+  stroke: none;
+}
+.stroke-002b36 {
+  stroke: $base03;
+}
+.stroke-073642 {
+  stroke: $base02;
+}
+.stroke-273134 {
+  stroke: $base02;
+}
+.stroke-39474b {
+  stroke: $base02;
+}
+.stroke-3f4f54 {
+  stroke: $base02;
+}
+.stroke-586e75 {
+  stroke: $base01;
+}
+.stroke-93a1a6 {
+  stroke: $base00;
+} 
+.stroke-e15343 {
+  stroke: $orange;
+}
+
+/* Anim Variables */
+$anim-speed: 0.25s;
+$anim-step-duration: 0.25s;
+$s: $anim-speed; /* shorthand */
+$d: $anim-step-duration;
+
+@mixin a-dash-f($step) {
+  animation:
+    dash $d $s*$step forwards,
+    light-up-stroke $d $s*$step forwards;
+}
+@mixin a-arrows-f($step) {
+  animation:
+    light-up-fill $d $s forwards,
+}
+
+
+/* User */
+#layer1 .fill-586e75 {
+  animation-name: light-up-fill;
+  animation-duration: $s*1;
+  animation-fill-mode: forwards;
+}
+
+/* User to Int */
+#path4798 {
+  stroke-dasharray: 10;
+  @include a-dash-f(1);
+  @include a-dash-f(8);
+  // Multiple mixins for animation isnt working. Maybe string interpolation or, 
+  // possibly better, the sass mixin takes variables that generates the whole thing.
+  animation:
+    //dash 0.25s $s*1 forwards,
+    //light-up-stroke 0.25s $s*1 forwards,
+    //back-dash 0.25s $s*2 forwards,
+    //dim-down-stroke 0.25s 2s forwards,
+    dash 0.25s 2.5s forwards,
+    light-up-stroke 0.25s 2.5s forwards;
+}
+
+#layer2 g {
+  @include a-arrows-f(1);
+  animation:
+    //light-up-fill 0.25s 0.25s forwards,
+    dim-down-fill 0.25s 1.75s forwards,
+    light-up-fill 0.25s 2.5s forwards;
+}
+
+/* Internet */
+#layer3 .fill-586e75 {
+  animation: 
+    light-up-fill 0.25s 0.5s forwards,
+    dim-down-fill 0.25s 1.75s forwards,
+    light-up-fill 0.25s 2.75s forwards;
+}
+/* Int to R53 */
+#path4838 {
+  stroke-dasharray: 10;
+  animation:
+    dash 0.25s 1s forwards,
+    light-up-stroke 0.25s 1s forwards,
+    back-dash 0.25s 1.25s forwards,
+    dim-down-stroke 0.25s 1.50s forwards;
+}
+
+#layer4 g {
+  animation:
+    light-up-fill 0.25s 0.75s forwards,
+    dim-down-fill 0.25s 1.25s forwards;
+}
+/* R53 */
+#layer7 .fill-586e75 {
+  animation: 
+    light-up-fill 0.25s 1s forwards,
+    dim-down-fill 0.25s 1.25s forwards;
+}
+/* Int to CF */
+#path4790 {
+  stroke-dasharray: 10;
+  animation-name: dash, light-up-stroke;
+  animation-duration: 0.5s;
+  animation-delay: 1.25s;
+  animation-fill-mode: forwards;
+}
+
+#layer10 g {
+  animation-name: light-up-fill;
+  animation-duration: 0.5s;
+  animation-delay: 1.25s;
+  animation-fill-mode: forwards;
+}
+/* CF */
+#layer11 .fill-586e75 {
+  animation-name: light-up-fill;
+  animation-duration: 0.25s;
+  animation-delay: 1.5s;
+  animation-fill-mode: forwards;
+}
+/* CF / */
+#layer12 .fill-586e75 {
+  animation-name: light-up-fill;
+  animation-duration: 0.25s;
+  animation-delay: 1.75s;
+  animation-fill-mode: forwards;
+}
+/* CF / to Lambda@Edge */
+#path4814 {
+  stroke-dasharray: 10;
+  animation-name: dash, light-up-stroke;
+  animation-duration: 0.5s;
+  animation-delay: 2s;
+  animation-fill-mode: forwards;
+}
+
+#layer15 g {
+  animation-name: light-up-fill;
+  animation-duration: 0.5s;
+  animation-delay: 2s;
+  animation-fill-mode: forwards;
+}
+/* Lambda@Edge */
+#layer17 .fill-586e75 {
+  animation-name: light-up-fill;
+  animation-duration: 0.25s;
+  animation-delay: 2.25s;
+  animation-fill-mode: forwards;
+}
+/* CF /lambda */
+#layer13 .fill-586e75 {
+  animation-name: light-up-fill;
+  animation-duration: 0.25s;
+  animation-delay: 2.5s;
+  animation-fill-mode: forwards;
+}
+
+/* CF /lambda to API */
+#path4806 {
+  stroke-dasharray: 10;
+  animation-name: dash, light-up-stroke;
+  animation-duration: 0.5s;
+  animation-delay: 2.75s;
+  animation-fill-mode: forwards;
+}
+
+#layer16 g {
+  animation-name: light-up-fill;
+  animation-duration: 0.5s;
+  animation-delay: 2.75s;
+  animation-fill-mode: forwards;
+}
+
+/* API */
+#layer18 .fill-586e75 {
+  animation-name: light-up-fill;
+  animation-duration: 0.25s;
+  animation-delay: 3s;
+  animation-fill-mode: forwards;
+}
+/* API to Lambda */
+#path4830 {
+  stroke-dasharray: 10;
+  animation-name: dash, light-up-stroke;
+  animation-duration: 0.5s;
+  animation-delay: 3.25s;
+  animation-fill-mode: forwards;
+}
+
+#layer20 g {
+  animation-name: light-up-fill;
+  animation-duration: 0.5s;
+  animation-delay: 3.25s;
+  animation-fill-mode: forwards;
+}
+/* Lambda */
+#layer21 .fill-586e75 {
+  animation-name: light-up-fill;
+  animation-duration: 0.25s;
+  animation-delay: 3.5s;
+  animation-fill-mode: forwards;
+}
+
+@keyframes light-up-fill {
+  from {fill: $base01;}
+  to {fill: $base1;}
+}
+@keyframes light-up-stroke {
+  from {stroke: $base01;}
+  to {stroke: $base1;}
+}
+@keyframes dash {
+  to {
+    stroke-dashoffset: -20;
+  }
+}
+
+@keyframes dim-down-fill {
+  from {fill: $base1;}
+  to {fill: $base01;}
+}
+@keyframes dim-down-stroke {
+  from {stroke: $base1;}
+  to {stroke: $base01;}
+}
+@keyframes back-dash {
+  to {
+    stroke-dashoffset: 20;
+  }
+}

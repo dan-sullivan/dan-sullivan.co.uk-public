@@ -1,0 +1,13 @@
+# OSX
+*.DS_Store
+._*
+
+# Vim
+*.swp
+
+# NPM
+node_modules/
+
+# Project specific
+.tmp/
+dist/
