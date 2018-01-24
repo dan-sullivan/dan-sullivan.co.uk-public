@@ -13,7 +13,24 @@ module.exports = function(grunt) {
 						},
 						files: {
 							"dist/css/skeleton.css": "src/scss/skeleton.scss",
-							"dist/css/main.css": "src/scss/main.scss"
+							"dist/css/main.css": "src/scss/main.scss",
+							"dist/css/infrasvg.css": "src/scss/dscouk-lambda.scss"
+						}
+					},
+					lambda: {
+						options: {
+							style: "expanded"
+						},
+						files: {
+							"dist/css/infrasvg.css": "src/scss/dscouk-lambda.scss"
+						}
+					},
+					s3cf: {
+						options: {
+							style: "expanded"
+						},
+						files: {
+							"dist/css/infrasvg.css": "src/scss/dscouk-s3cf.scss"
 						}
 					}
         },
@@ -144,7 +161,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks("grunt-template");
   grunt.loadNpmTasks('grunt-notify');
 	grunt.registerTask("default", ["clean", "browserify:dist", "uglify:dist", "sass:dist", "template:dist", "htmlclean:dist", "copy:dist"]);
-	grunt.registerTask("lambda", ["clean", "browserify:dist", "uglify:dist", "sass:dist", "template:lambda", "htmlclean:dist", "copy:dist"]);
-	grunt.registerTask("s3cf", ["clean", "browserify:dist", "uglify:dist", "sass:dist", "template:s3cf", "htmlclean:dist", "copy:dist"]);
+	grunt.registerTask("lambda", ["clean", "browserify:dist", "uglify:dist", "sass:dist", "sass:lambda", "template:lambda", "htmlclean:dist", "copy:dist"]);
+	grunt.registerTask("s3cf", ["clean", "browserify:dist", "uglify:dist", "sass:dist", "sass:s3cf", "template:s3cf", "htmlclean:dist", "copy:dist"]);
 	grunt.registerTask("serve", ["connect:server", "watch"]);
 };
