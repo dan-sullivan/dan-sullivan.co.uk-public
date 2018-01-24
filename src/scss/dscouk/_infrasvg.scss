@@ -1,0 +1,101 @@
+
+.fill-none {
+  fill: none;
+}
+.fill-002b36 {
+  fill: $base03;
+}
+.fill-073642 {
+  fill: $base02;
+}
+.fill-273134 {
+  fill: $base02;
+}
+.fill-39474b {
+  fill: $base02;
+}
+.fill-3f4f54 {
+  fill: $base02;
+}
+.fill-586e75 {
+  fill: $base01;
+}
+.fill-93a1a6 {
+  fill: $base00;
+} 
+.fill-e15343 {
+  fill: $orange;
+}
+
+.stroke-none {
+  stroke: none;
+}
+.stroke-002b36 {
+  stroke: $base03;
+}
+.stroke-073642 {
+  stroke: $base02;
+}
+.stroke-273134 {
+  stroke: $base02;
+}
+.stroke-39474b {
+  stroke: $base02;
+}
+.stroke-3f4f54 {
+  stroke: $base02;
+}
+.stroke-586e75 {
+  stroke: $base01;
+}
+.stroke-93a1a6 {
+  stroke: $base00;
+} 
+.stroke-e15343 {
+  stroke: $orange;
+}
+
+/* Anim Variables */
+$anim-speed: 0.25s;
+$anim-step-duration: 0.25s;
+$s: $anim-speed; /* shorthand */
+$d: $anim-step-duration;
+
+@mixin a-dash-f($step) {
+  animation:
+    dash $d $s*$step forwards,
+    light-up-stroke $d $s*$step forwards;
+}
+@mixin a-arrows-f($step) {
+  animation:
+    light-up-fill $d $s forwards,
+}
+
+
+@keyframes light-up-fill {
+  from {fill: $base01;}
+  to {fill: $base1;}
+}
+@keyframes light-up-stroke {
+  from {stroke: $base01;}
+  to {stroke: $base1;}
+}
+@keyframes dash {
+  to {
+    stroke-dashoffset: -20;
+  }
+}
+
+@keyframes dim-down-fill {
+  from {fill: $base1;}
+  to {fill: $base01;}
+}
+@keyframes dim-down-stroke {
+  from {stroke: $base1;}
+  to {stroke: $base01;}
+}
+@keyframes back-dash {
+  to {
+    stroke-dashoffset: 20;
+  }
+}

@@ -2,6 +2,9 @@ module.exports = function(grunt) {
   var serveStatic = require("serve-static"); // used in livereload middleware for connect
     grunt.initConfig({
         infraSvg: grunt.file.read("src/images/dscouk-infra-css.svg"),
+        lambdaThisSite: grunt.file.read("src/templates/lambda-thissite.tpl"),
+        s3cfThisSite: grunt.file.read("src/templates/s3cf-thissite.tpl"),
+        localThisSite: grunt.file.read("src/templates/local-thissite.tpl"),
 				clean: ["dist/", ".tmp/"],
         sass: {
 					dist: {
@@ -10,7 +13,24 @@ module.exports = function(grunt) {
 						},
 						files: {
 							"dist/css/skeleton.css": "src/scss/skeleton.scss",
-							"dist/css/main.css": "src/scss/main.scss"
+							"dist/css/main.css": "src/scss/main.scss",
+							"dist/css/infrasvg.css": "src/scss/dscouk-lambda.scss"
+						}
+					},
+					lambda: {
+						options: {
+							style: "expanded"
+						},
+						files: {
+							"dist/css/infrasvg.css": "src/scss/dscouk-lambda.scss"
+						}
+					},
+					s3cf: {
+						options: {
+							style: "expanded"
+						},
+						files: {
+							"dist/css/infrasvg.css": "src/scss/dscouk-s3cf.scss"
 						}
 					}
         },
@@ -32,6 +52,31 @@ module.exports = function(grunt) {
               data: {
                 "title": "Dan Sullivan",
                 "infrasvg": "<%= infraSvg %>",
+                "thissite": "<%= localThisSite %>",
+              }
+            },
+            files: {
+              "dist/index.html": ['src/index.html']
+            } 
+          },
+          lambda: {
+            options: {
+              data: {
+                "title": "Dan Sullivan",
+                "infrasvg": "<%= infraSvg %>",
+                "thissite": "<%= lambdaThisSite %>",
+              }
+            },
+            files: {
+              "dist/index.html": ['src/index.html']
+            } 
+          },
+          s3cf: {
+            options: {
+              data: {
+                "title": "Dan Sullivan",
+                "infrasvg": "<%= infraSvg %>",
+                "thissite": "<%= s3cfThisSite %>",
               }
             },
             files: {
@@ -70,7 +115,19 @@ module.exports = function(grunt) {
 					},
 					html: {
 						files: ["src/*.html"], // which files to watch
-						tasks: ["template", "htmlclean"]
+						tasks: ["template:dist", "htmlclean"]
+					},
+					local: {
+						files: ["src/templates/local*.tpl"], // which files to watch
+						tasks: ["template:dist", "htmlclean"]
+					},
+					lambda: {
+						files: ["src/templates/lambda*.tpl"], // which files to watch
+						tasks: ["template:lambda", "htmlclean"]
+					},
+					s3cf: {
+						files: ["src/templates/s3cf*.tpl"], // which files to watch
+						tasks: ["template:s3cf", "htmlclean"]
 					},
 					js: {
 						files: ["src/js/index.js"], // which files to watch
@@ -103,6 +160,8 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks("grunt-browserify");
   grunt.loadNpmTasks("grunt-template");
   grunt.loadNpmTasks('grunt-notify');
-	grunt.registerTask("default", ["clean", "browserify", "uglify", "sass", "template", "htmlclean", "copy"]);
+	grunt.registerTask("default", ["clean", "browserify:dist", "uglify:dist", "sass:dist", "template:dist", "htmlclean:dist", "copy:dist"]);
+	grunt.registerTask("lambda", ["clean", "browserify:dist", "uglify:dist", "sass:dist", "sass:lambda", "template:lambda", "htmlclean:dist", "copy:dist"]);
+	grunt.registerTask("s3cf", ["clean", "browserify:dist", "uglify:dist", "sass:dist", "sass:s3cf", "template:s3cf", "htmlclean:dist", "copy:dist"]);
 	grunt.registerTask("serve", ["connect:server", "watch"]);
 };
