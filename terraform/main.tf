@@ -11,6 +11,11 @@ provider "aws" {
   region = "eu-west-2"
 }
 
+provider "aws" {
+  alias  = "us-east-1"
+  region = "us-east-1"
+}
+
 # Use aws_caller_identity to get my AWS account ID for reference 
 # Used here instead of hardcoding or setting a var for the account ID in ARNs
 data "aws_caller_identity" "current" {}
