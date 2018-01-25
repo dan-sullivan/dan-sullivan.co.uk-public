@@ -1,3 +1,10 @@
+# Get ARN of SSL Cert in acm
+data "aws_acm_certificate" "dscouk" {
+  provider = "aws.us-east-1"
+  domain   = "dan-sullivan.co.uk"
+  statuses = ["ISSUED"]
+}
+
 resource "aws_cloudfront_distribution" "dscouk" {
   origin {
     # Funkyness to extract domain name from full invoke URL. Works but surely a better way?
@@ -60,6 +67,7 @@ resource "aws_cloudfront_distribution" "dscouk" {
   }
 
   viewer_certificate {
-    cloudfront_default_certificate = true
+    acm_certificate_arn = "${data.aws_acm_certificate.dscouk.arn}"
+    ssl_support_method = "sni-only"
   }
 }
