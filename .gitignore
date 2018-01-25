@@ -11,3 +11,7 @@ node_modules/
 # Project specific
 .tmp/
 dist/
+.terraform*
+terraform.*
+*venv
+*.zip
