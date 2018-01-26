@@ -76,14 +76,6 @@ EOF
   }
 }
 
-resource "aws_lambda_permission" "allow_api_gateway" {
-  function_name = "${aws_lambda_function.serve_dscouk.function_name}"
-  statement_id  = "AllowExecutionFromApiGateway"
-  action        = "lambda:InvokeFunction"
-  principal     = "apigateway.amazonaws.com"
-  source_arn    = "arn:aws:execute-api:eu-west-2:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.serve_dscouk_api.id}/*/GET/*"
-}
-
 resource "aws_api_gateway_deployment" "serve_dscouk_api_deployment" {
   rest_api_id = "${aws_api_gateway_rest_api.serve_dscouk_api.id}"
   stage_name  = "production"
@@ -94,4 +86,8 @@ resource "aws_api_gateway_deployment" "serve_dscouk_api_deployment" {
   # "The REST API doesn't contain any methods"
   # https://github.com/hashicorp/terraform/issues/7588
   depends_on = ["aws_api_gateway_method.serve_dscouk_method_get"]
+}
+
+output "api_id" {
+  value = "{aws_api_gateway_rest_api.serve_dscouk_api.id}"
 }

@@ -1,14 +1,4 @@
-# Create the Lambda function, uploading our code
-# TODO: Create a null resource that zips up our code
-# ZIPFILE=$(pwd)/serve_dscouk.zip; pushd $(pwd); cd ../; zip -r $ZIPFILE ./dist; popd; zip $ZIPFILE serve_dscouk.py
-resource "aws_lambda_function" "serve_dscouk" {
-  function_name    = "serve_dscouk"
-  handler          = "serve_dscouk.handler"
-  runtime          = "python3.6"
-  filename         = "serve_dscouk.zip"
-  source_code_hash = "${base64sha256(file("serve_dscouk.zip"))}"
-  role             = "${aws_iam_role.lambda_exec_role_serve_dscouk.arn}"
-}
+# Actual lambdas moved into separate terraform configs/states
 
 # Execution role to attach to the lambda
 # TODO: Move into aws_iam_policy_document?
@@ -32,3 +22,6 @@ resource "aws_iam_role" "lambda_exec_role_serve_dscouk" {
 EOF
 }
 
+output "lambda_exec_role" {
+  value = "${aws_iam_role.lambda_exec_role_serve_dscouk.arn}"
+}
