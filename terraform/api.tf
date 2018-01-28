@@ -2,7 +2,6 @@
 resource "aws_api_gateway_rest_api" "serve_dscouk_api" {
   name = "serve_dscouk_api"
 }
-
 # A resource on the API gateway - this is an endpoint. /dscouk in this case
 resource "aws_api_gateway_resource" "serve_dscouk_res_dscouk" {
   rest_api_id = "${aws_api_gateway_rest_api.serve_dscouk_api.id}"
@@ -78,7 +77,7 @@ EOF
 
 resource "aws_api_gateway_deployment" "serve_dscouk_api_deployment" {
   rest_api_id = "${aws_api_gateway_rest_api.serve_dscouk_api.id}"
-  stage_name  = "production"
+  stage_name  = "${terraform.workspace == "default" ? "production" : terraform.workspace}"
   description = "Serve dan-sullivan.co.uk lambda page"
 
   # Add depencies for your gateway methods to ensure the methods are created
