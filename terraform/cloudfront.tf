@@ -9,7 +9,7 @@ resource "aws_cloudfront_distribution" "dscouk" {
   origin {
     # Funkyness to extract domain name from full invoke URL. Works but surely a better way?
     domain_name = "${element(split("/",aws_api_gateway_deployment.serve_dscouk_api_deployment.invoke_url), 2)}"
-    origin_path = "/production/dscouk"
+    origin_path = "/${terraform.workspace == "default" ? "production" : terraform.workspace}/dscouk"
     origin_id   = "dscouk-lambda"
     custom_origin_config {
       http_port = 80
@@ -30,16 +30,16 @@ resource "aws_cloudfront_distribution" "dscouk" {
 
   enabled             = true
   is_ipv6_enabled     = true
-  comment             = "dan-sullivan.co.uk distribution"
+  comment             = "${terraform.workspace == "default" ? "" : "${terraform.workspace}."}dan-sullivan.co.uk distribution"
   default_root_object = "index.html"
 
   logging_config {
     include_cookies = false
     bucket          = "dscouk-logs.s3.amazonaws.com"
-    prefix          = "cf-prod"
+    prefix          = "cf-${terraform.workspace == "default" ? "prod" : terraform.workspace}"
   }
 
-  aliases = ["dan-sullivan.co.uk"]
+  aliases = ["${terraform.workspace == "default" ? "" : "${terraform.workspace}."}dan-sullivan.co.uk"]
 
 # Add a cache_behaviour for each uri. Default to the redirect lambda@edge
   default_cache_behavior {
@@ -58,8 +58,8 @@ resource "aws_cloudfront_distribution" "dscouk" {
 
     viewer_protocol_policy = "redirect-to-https"
     min_ttl                = 0
-    default_ttl            = 3600
-    max_ttl                = 86400
+    default_ttl            = "${terraform.workspace == "default" ? 3600 : 60}"
+    max_ttl                = "${terraform.workspace == "default" ? 86400 : 60}"
 
   }
 
@@ -81,8 +81,8 @@ resource "aws_cloudfront_distribution" "dscouk" {
 
     viewer_protocol_policy = "redirect-to-https"
     min_ttl                = 0
-    default_ttl            = 3600
-    max_ttl                = 86400
+    default_ttl            = "${terraform.workspace == "default" ? 3600 : 60}"
+    max_ttl                = "${terraform.workspace == "default" ? 86400 : 60}"
 
   }
 
