@@ -27,7 +27,7 @@ jobs:
           - v1-dependencies-
 
       - run: echo "Running..."
-      - run: sudo npm install -g grunt-cli
+      - run: sudo yarn global add grunt-cli
       - run: yarn install
       - run: grunt
       - run: cd terraform; terraform init; terraform plan
