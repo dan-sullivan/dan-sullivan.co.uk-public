@@ -30,7 +30,7 @@ jobs:
       - run: sudo yarn global add grunt-cli
       - run: yarn install
       - run: grunt
-      - run: cd terraform; terraform init; terraform plan
+      - run: if [[ ! -z $CIRCLE_PULL_REQUEST ]] ; then cd terraform; terraform init; if ! terraform workspace new pr${CIRCLE_PULL_REQUEST##*/}; then terraform workspace select pr${CIRCLE_PULL_REQUEST##*/}; fi; terraform plan && terraform apply; fi
 
       - save_cache:
           paths:

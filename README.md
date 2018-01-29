@@ -17,6 +17,7 @@ Diagram
 
 ## Continuous Integration
 
+CI and Continuous Deployment is handled by Circle CI with Github integrations
 
 
 ## Frontend
