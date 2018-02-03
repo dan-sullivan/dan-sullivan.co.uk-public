@@ -1,16 +1,12 @@
-# The API Gateway name
-resource "aws_api_gateway_rest_api" "serve_dscouk_api" {
-  name = "serve_dscouk_api"
-}
 # A resource on the API gateway - this is an endpoint. /dscouk in this case
 resource "aws_api_gateway_resource" "serve_dscouk_res_dscouk" {
-  rest_api_id = "${aws_api_gateway_rest_api.serve_dscouk_api.id}"
-  parent_id   = "${aws_api_gateway_rest_api.serve_dscouk_api.root_resource_id}"
-  path_part   = "dscouk"
+  rest_api_id = "${data.terraform_remote_state.dscouk_core.api_id}"
+  parent_id = "${data.terraform_remote_state.dscouk_core.api_root_resource_id}"
+  path_part  = "${terraform.workspace == "default" ? "dscouk" : terraform.workspace}"
 }
 
 resource "aws_api_gateway_resource" "serve_dscouk_res_dscouk_res" {
-  rest_api_id = "${aws_api_gateway_rest_api.serve_dscouk_api.id}"
+  rest_api_id = "${data.terraform_remote_state.dscouk_core.api_id}"
   parent_id   = "${aws_api_gateway_resource.serve_dscouk_res_dscouk.id}"
   path_part   = "{proxy+}"
 }
@@ -18,7 +14,7 @@ resource "aws_api_gateway_resource" "serve_dscouk_res_dscouk_res" {
 # Set up the methods used for the endpoint
 #------ DSCOUK GET ------
 resource "aws_api_gateway_method" "serve_dscouk_method_get" {
-  rest_api_id   = "${aws_api_gateway_rest_api.serve_dscouk_api.id}"
+  rest_api_id   = "${data.terraform_remote_state.dscouk_core.api_id}"
   resource_id   = "${aws_api_gateway_resource.serve_dscouk_res_dscouk_res.id}"
   http_method   = "GET"
   authorization = "NONE"
@@ -27,11 +23,11 @@ resource "aws_api_gateway_method" "serve_dscouk_method_get" {
 
 #------ DSCOUK GET TO LAMBDA ------
 resource "aws_api_gateway_integration" "request_method_integration" {
-  rest_api_id = "${aws_api_gateway_rest_api.serve_dscouk_api.id}"
+  rest_api_id = "${data.terraform_remote_state.dscouk_core.api_id}"
   resource_id = "${aws_api_gateway_resource.serve_dscouk_res_dscouk_res.id}"
   http_method = "${aws_api_gateway_method.serve_dscouk_method_get.http_method}"
   type        = "AWS_PROXY"
-  uri         = "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:${data.aws_caller_identity.current.account_id}:function:serve_dscouk/invocations"
+  uri         = "arn:aws:apigateway:eu-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-2:${data.aws_caller_identity.current.account_id}:function:serve_dscouk${terraform.workspace == "default" ? "" : "_${terraform.workspace}"}/invocations"
 
   # HTTP Method from API Gateway to the Lambda. Must be a POST.
   integration_http_method = "POST"
@@ -39,7 +35,7 @@ resource "aws_api_gateway_integration" "request_method_integration" {
 
 #------ DSCOUK GET LAMBDA RESPONSE MAP ------
 resource "aws_api_gateway_method_response" "response_method" {
-  rest_api_id = "${aws_api_gateway_rest_api.serve_dscouk_api.id}"
+  rest_api_id = "${data.terraform_remote_state.dscouk_core.api_id}"
   resource_id = "${aws_api_gateway_resource.serve_dscouk_res_dscouk_res.id}"
   http_method = "${aws_api_gateway_method.serve_dscouk_method_get.http_method}"
   status_code = "200"
@@ -54,7 +50,7 @@ resource "aws_api_gateway_method_response" "response_method" {
 
 #------LAMBDA TO DSCOUK GET ------
 resource "aws_api_gateway_integration_response" "response_method_integration" {
-  rest_api_id = "${aws_api_gateway_rest_api.serve_dscouk_api.id}"
+  rest_api_id = "${data.terraform_remote_state.dscouk_core.api_id}"
   resource_id = "${aws_api_gateway_resource.serve_dscouk_res_dscouk_res.id}"
 
   # Always populate the http_method with a resource rather than entering the 
@@ -76,17 +72,9 @@ EOF
 }
 
 resource "aws_api_gateway_deployment" "serve_dscouk_api_deployment" {
-  rest_api_id = "${aws_api_gateway_rest_api.serve_dscouk_api.id}"
+  rest_api_id = "${data.terraform_remote_state.dscouk_core.api_id}"
   stage_name  = "${terraform.workspace == "default" ? "production" : terraform.workspace}"
   description = "Serve dan-sullivan.co.uk lambda page"
 
-  # Add depencies for your gateway methods to ensure the methods are created
-  # before attempting the deployment. Avoids error:
-  # "The REST API doesn't contain any methods"
-  # https://github.com/hashicorp/terraform/issues/7588
-  depends_on = ["aws_api_gateway_method.serve_dscouk_method_get"]
-}
-
-output "api_id" {
-  value = "{aws_api_gateway_rest_api.serve_dscouk_api.id}"
+  depends_on = ["aws_api_gateway_integration_response.response_method_integration"]
 }

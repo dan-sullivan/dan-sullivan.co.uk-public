@@ -12,7 +12,7 @@ def handler(event, context):
     else:
         prefix_path = ""
     try:
-        response = open(prefix_path + "dist/" + event["path"].split("dscouk/")[1], "r").read()
+        response = open(prefix_path + "dist/" + "/".join(event["path"].split("/")[2:]), "r").read()
         statusCode = "200"
         contentType = CONTENTTYPE_MAP[event["path"].split(".")[-1]]
     except:

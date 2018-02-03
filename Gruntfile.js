@@ -103,7 +103,7 @@ module.exports = function(grunt) {
 					}
 				},
         exec: {
-            zip_lambda_dscouk: 'ZIPFILE=$(pwd)/lambda/zips/serve_dscouk.zip; pushd $(pwd); zip -r $ZIPFILE ./dist; cd lambda/; zip $ZIPFILE serve_dscouk.py; popd',
+            zip_lambda_dscouk: 'ZIPFILE=$(pwd)/terraform/zips/serve_dscouk.zip; zip -r $ZIPFILE ./dist; cd terraform/; zip $ZIPFILE serve_dscouk.py',
         },
         watch: {
 					options: {
@@ -164,7 +164,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks("grunt-template");
   grunt.loadNpmTasks('grunt-notify');
   grunt.loadNpmTasks('grunt-exec');
-	grunt.registerTask("default", ["clean", "browserify:dist", "uglify:dist", "sass:dist", "template:dist", "htmlclean:dist", "copy:dist"]);
+	grunt.registerTask("default", ["clean", "browserify:dist", "uglify:dist", "sass:dist", "template:dist", "htmlclean:dist", "copy:dist", "exec:zip_lambda_dscouk"]);
 	grunt.registerTask("lambda", ["clean", "browserify:dist", "uglify:dist", "sass:dist", "sass:lambda", "template:lambda", "htmlclean:dist", "copy:dist"]);
 	grunt.registerTask("s3cf", ["clean", "browserify:dist", "uglify:dist", "sass:dist", "sass:s3cf", "template:s3cf", "htmlclean:dist", "copy:dist"]);
 	grunt.registerTask("serve", ["connect:server", "watch"]);
