@@ -7,7 +7,7 @@ jobs:
   build:
     docker:
       # specify the version you desire here
-      - image: dansullivan/dan-sullivan.co.uk:0.0.1
+      - image: dansullivan/dan-sullivan.co.uk:0.0.2
       
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -29,9 +29,12 @@ jobs:
       - run: echo "Running..."
       - run: sudo yarn global add grunt-cli
       - run: yarn install
-      - run: grunt
+      - run: grunt lambda
+      - run: grunt exec:zip_lambda_dscouk
       - run: if [[ ! -z $CIRCLE_PULL_REQUEST ]] ; then cd terraform; terraform init; if ! terraform workspace new pr${CIRCLE_PULL_REQUEST##*/}; then terraform workspace select pr${CIRCLE_PULL_REQUEST##*/}; fi; terraform plan && terraform apply; fi
       - run: if [ $CIRCLE_BRANCH = 'master' ]; then cd terraform; terraform init; terraform plan && terraform apply; fi
+      - run: grunt s3cf
+      - run: if [[ ! -z $CIRCLE_PULL_REQUEST ]] ; then BRANCH_PR=pr${CIRCLE_PULL_REQUEST##*/}; else BRANCH_PR=$CIRCLE_BRANCH; fi; grunt exec:upload_s3cf:$BRANCH_PR
       - save_cache:
           paths:
             - node_modules
