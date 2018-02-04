@@ -104,6 +104,7 @@ module.exports = function(grunt) {
 				},
         exec: {
             zip_lambda_dscouk: 'ZIPFILE=$(pwd)/terraform/zips/serve_dscouk.zip; zip -r $ZIPFILE ./dist; cd terraform/; zip $ZIPFILE serve_dscouk.py',
+            invalidate_cf: 'cd terraform/core && aws cloudfront create-invalidation --distribution-id $(terraform output cloudfront_id) --paths "/*"',
             upload_s3cf: {
               cmd: function(branch_arg) {
                 if (branch_arg) {

@@ -332,3 +332,7 @@ resource "aws_cloudfront_distribution" "dscouk" {
     ssl_support_method = "sni-only"
   }
 }
+
+output "cloudfront_id" {
+  value = "${aws_cloudfront_distribution.dscouk.id}"
+}
