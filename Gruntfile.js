@@ -106,9 +106,10 @@ module.exports = function(grunt) {
             zip_lambda_dscouk: 'ZIPFILE=$(pwd)/terraform/zips/serve_dscouk.zip; zip -r $ZIPFILE ./dist; cd terraform/; zip $ZIPFILE serve_dscouk.py',
             upload_s3cf: {
               cmd: function(branch_arg) {
-								if (branch_arg) {
-								  return 'aws s3 sync --region eu-west-2 ./dist/ s3://dan-sullivan.co.uk/s3/' + branch_arg;
-								}
+                if (branch_arg) {
+                  if (branch_arg == "master"){ branch_arg = "" };
+                  return 'aws s3 sync --region eu-west-2 ./dist/ s3://dan-sullivan.co.uk/s3/' + branch_arg;
+                }
 							}
 						},
         },
