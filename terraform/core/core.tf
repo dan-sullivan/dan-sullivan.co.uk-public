@@ -154,7 +154,84 @@ output "api_root_resource_id" {
   value = "${aws_api_gateway_rest_api.serve_dscouk_api.root_resource_id}"
 }
 
+#LAMBDA
 
+
+# Execution role to attach to the lambda
+# TODO: Move into aws_iam_policy_document?
+resource "aws_iam_role" "lambda_exec_role_serve_dscouk" {
+  name = "lambda_exec_role_dscouk"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "lambda.amazonaws.com"
+      },
+      "Effect": "Allow",
+      "Sid": ""
+    }
+  ]
+}
+EOF
+}
+resource "aws_iam_role" "lambda_exec_role_edge_lambda" {
+  name = "lambda_exec_role_edge_lambda"
+
+  assume_role_policy = <<EOF
+{
+   "Version": "2012-10-17",
+   "Statement": [
+      {
+         "Effect": "Allow",
+         "Principal": {
+            "Service": [
+               "lambda.amazonaws.com",
+               "edgelambda.amazonaws.com"
+            ]
+         },
+         "Action": "sts:AssumeRole"
+      }
+   ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "basic" {
+  role = "${aws_iam_role.lambda_exec_role_edge_lambda.name}"
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+output "lambda_exec_role" {
+  value = "${aws_iam_role.lambda_exec_role_serve_dscouk.arn}"
+}
+
+data "archive_file" "edge_redirect" {
+  type = "zip"
+  output_path = "zips/edge_redirect.zip"
+  source {
+    filename = "index.js"
+    content = "${file("edge_redirect.js")}"
+  }
+}
+
+# Upload the Lambda zip
+resource "aws_lambda_function" "edge_redirect" {
+  function_name    = "edge_redirect"
+  handler          = "index.handler"
+  runtime          = "nodejs6.10"
+  filename         = "${data.archive_file.edge_redirect.output_path}"
+  source_code_hash = "${data.archive_file.edge_redirect.output_base64sha256}"
+  role             = "${aws_iam_role.lambda_exec_role_edge_lambda.arn}"
+  publish          = true
+  provider         = "aws.us-east-1"
+}
+output "edge_redirect_arn" {
+  value = "${aws_lambda_function.edge_redirect.qualified_arn}"
+}
 
 # CLOUDFRONT 
 
@@ -232,6 +309,10 @@ resource "aws_cloudfront_distribution" "dscouk" {
     default_ttl            = "${terraform.workspace == "default" ? 3600 : 60}"
     max_ttl                = "${terraform.workspace == "default" ? 86400 : 60}"
 
+    lambda_function_association {
+      event_type = "viewer-request"
+      lambda_arn = "${aws_lambda_function.edge_redirect.qualified_arn}"
+    }
   }
 
   # /lambda cache behaviour - prod
