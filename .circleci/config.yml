@@ -32,9 +32,10 @@ jobs:
       - run: grunt lambda
       - run: grunt exec:zip_lambda_dscouk
       - run: if [[ ! -z $CIRCLE_PULL_REQUEST ]] ; then cd terraform; terraform init; if ! terraform workspace new pr${CIRCLE_PULL_REQUEST##*/}; then terraform workspace select pr${CIRCLE_PULL_REQUEST##*/}; fi; terraform plan && terraform apply; fi
-      - run: if [ $CIRCLE_BRANCH = 'master' ]; then cd terraform; terraform init; terraform plan && terraform apply &&  grunt exec:invalidate_cf; fi
+      - run: if [ $CIRCLE_BRANCH = 'master' ]; then cd terraform; terraform init; terraform plan && terraform apply; fi
       - run: grunt s3cf
       - run: if [[ ! -z $CIRCLE_PULL_REQUEST ]] ; then BRANCH_PR=pr${CIRCLE_PULL_REQUEST##*/}; else BRANCH_PR=$CIRCLE_BRANCH; fi; grunt exec:upload_s3cf:$BRANCH_PR
+      - run: if [ $CIRCLE_BRANCH = 'master' ]; then grunt exec:invalidate_cf; fi
       - save_cache:
           paths:
             - node_modules
