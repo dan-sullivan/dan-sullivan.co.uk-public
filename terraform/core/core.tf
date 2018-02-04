@@ -234,11 +234,34 @@ resource "aws_cloudfront_distribution" "dscouk" {
 
   }
 
+  # /lambda cache behaviour - prod
+  cache_behavior {
+    allowed_methods  = ["HEAD", "GET"]
+    cached_methods   = ["HEAD", "GET"]
+    target_origin_id = "dscouk-lambda-prod"
+    path_pattern = "/lambda*"
+
+    forwarded_values {
+      query_string = false
+
+      cookies {
+        forward = "none"
+      }
+    }
+
+
+    viewer_protocol_policy = "redirect-to-https"
+    min_ttl                = 0
+    default_ttl            = 3600
+    max_ttl                = 86400
+
+  }
+  # /pr cache behaviour - dev
   cache_behavior {
     allowed_methods  = ["HEAD", "GET"]
     cached_methods   = ["HEAD", "GET"]
     target_origin_id = "dscouk-lambda-dev"
-    path_pattern = "pr*/*"
+    path_pattern = "/pr*/pr*/lambda*"
 
     forwarded_values {
       query_string = false
@@ -251,17 +274,17 @@ resource "aws_cloudfront_distribution" "dscouk" {
 
     viewer_protocol_policy = "redirect-to-https"
     min_ttl                = 0
-    default_ttl            = "${terraform.workspace == "default" ? 3600 : 60}"
-    max_ttl                = "${terraform.workspace == "default" ? 86400 : 60}"
+    default_ttl            = 60
+    max_ttl                = 60
 
   }
 
-  # /s3 cache behavious 
+  # /s3 cache behaviour - prod
   cache_behavior {
     allowed_methods  = ["HEAD", "GET"]
     cached_methods   = ["HEAD", "GET"]
     target_origin_id = "dscouk-s3"
-    path_pattern = "s3/*"
+    path_pattern = "/s3*"
 
     forwarded_values {
       query_string = false
@@ -270,13 +293,30 @@ resource "aws_cloudfront_distribution" "dscouk" {
         forward = "none"
       }
     }
-
-
     viewer_protocol_policy = "redirect-to-https"
     min_ttl                = 0
-    default_ttl            = "${terraform.workspace == "default" ? 3600 : 60}"
-    max_ttl                = "${terraform.workspace == "default" ? 86400 : 60}"
+    default_ttl            = 3600
+    max_ttl                = 86400
+  }
 
+  # /s3 cache behaviour - dev
+  cache_behavior {
+    allowed_methods  = ["HEAD", "GET"]
+    cached_methods   = ["HEAD", "GET"]
+    target_origin_id = "dscouk-s3"
+    path_pattern = "/pr*/pr*/s3*"
+
+    forwarded_values {
+      query_string = false
+
+      cookies {
+        forward = "none"
+      }
+    }
+    viewer_protocol_policy = "redirect-to-https"
+    min_ttl                = 0
+    default_ttl            = 60
+    max_ttl                = 60
   }
 
   price_class = "PriceClass_100"

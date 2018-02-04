@@ -107,8 +107,8 @@ module.exports = function(grunt) {
             upload_s3cf: {
               cmd: function(branch_arg) {
                 if (branch_arg) {
-                  if (branch_arg == "master"){ branch_arg = "" };
-                  return 'aws s3 sync --region eu-west-2 ./dist/ s3://dan-sullivan.co.uk/s3/' + branch_arg;
+                  if (branch_arg == "master"){ branch_arg = "s3" } else { branch_arg = branch_arg + "/" + branch_arg + "/s3" };
+                  return 'aws s3 sync --region eu-west-2 ./dist/ s3://dan-sullivan.co.uk/' + branch_arg;
                 }
 							}
 						},

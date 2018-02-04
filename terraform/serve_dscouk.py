@@ -8,11 +8,11 @@ CONTENTTYPE_MAP = {
 def handler(event, context):
     if event == "cli":
         prefix_path = "../"
-        event = {'resource': '/dscouk/{proxy+}', 'path': '/dscouk/index.html', 'httpMethod': 'GET', 'headers': {}}
+        event = {'resource': '/dscouk/{proxy+}', 'path': '/dscouk/lambda/index.html', 'httpMethod': 'GET', 'headers': {}}
     else:
         prefix_path = ""
     try:
-        response = open(prefix_path + "dist/" + "/".join(event["path"].split("/")[2:]), "r").read()
+        response = open(prefix_path + "dist/" + "/".join(event["path"].split("/")[3:]), "r").read()
         statusCode = "200"
         contentType = CONTENTTYPE_MAP[event["path"].split(".")[-1]]
     except:
