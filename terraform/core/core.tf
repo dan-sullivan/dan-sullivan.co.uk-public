@@ -273,6 +273,17 @@ resource "aws_cloudfront_distribution" "dscouk" {
     }
   }
 
+  origin {
+    # Needs to be the s3 bucket
+    domain_name = "${aws_s3_bucket.dscouk.bucket_domain_name}"
+    origin_id   = "dscouk-s3-favicon"
+    origin_path = "/s3"
+   
+    s3_origin_config {
+      origin_access_identity = "${aws_cloudfront_origin_access_identity.dscouk.cloudfront_access_identity_path}"
+    }
+  }
+
   enabled             = true
   is_ipv6_enabled     = true
   comment             = "${terraform.workspace == "default" ? "" : "${terraform.workspace}."}dan-sullivan.co.uk distribution"
@@ -285,9 +296,6 @@ resource "aws_cloudfront_distribution" "dscouk" {
   }
 
   aliases = ["${terraform.workspace == "default" ? "" : "${terraform.workspace}."}dan-sullivan.co.uk"]
-
-# Add cache behaviour for /pr* and /bt-* (for branch test future use)
-# How to use this in API - still to work out. 
 
 # Add a cache_behaviour for each uri. Default to the redirect lambda@edge
   default_cache_behavior {
@@ -321,6 +329,27 @@ resource "aws_cloudfront_distribution" "dscouk" {
     cached_methods   = ["HEAD", "GET"]
     target_origin_id = "dscouk-lambda-prod"
     path_pattern = "/lambda*"
+
+    forwarded_values {
+      query_string = false
+
+      cookies {
+        forward = "none"
+      }
+    }
+
+
+    viewer_protocol_policy = "redirect-to-https"
+    min_ttl                = 0
+    default_ttl            = 3600
+    max_ttl                = 86400
+
+  }
+  cache_behavior {
+    allowed_methods  = ["HEAD", "GET"]
+    cached_methods   = ["HEAD", "GET"]
+    target_origin_id = "dscouk-s3-favicon"
+    path_pattern = "/favicon.ico"
 
     forwarded_values {
       query_string = false
