@@ -2,7 +2,7 @@
 
 [dan-sullivan.co.uk](dan-sullivan.co.uk) is my personal site, used to demonstrate familiarity with a variety of technologies and concepts. Similarly, this repository contains and documents the various code and configuration used to build the site.
 
-## This Goal
+## Goal
 
 As the goal is to demonstrate common DevOps concepts like infrastructure as code and automation, the site content is extremely simple. Hitting the root of the site will redirect you to the same page served by different methods. The intention being to grow the methods.
 
