@@ -53,6 +53,10 @@ a {
   display: inline-block;
 }
 
+.marginb {
+  margin-bottom: 10px;
+}
+
 
 // Larger than mobile - switch div order for side by side infra and name
 @media ("min-width: 420px") {
