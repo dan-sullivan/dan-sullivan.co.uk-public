@@ -6,7 +6,7 @@
 
 As the goal is to demonstrate common DevOps concepts like infrastructure as code and automation, the site content is extremely simple. Hitting the root of the site will redirect you to the same page served by different methods. The intention being to grow the methods.
 
-AWS Lambda
+AWS Lambda  
 AWS S3
 
 ## Infrastucture
@@ -48,13 +48,14 @@ Watch and Livereload plugins assist with rapid development.
   * run `grunt` (to watch and compile sass files)
 
 ### Grunt Tasks
-`grunt lambda` - build lambda specific version of page
-`grunt s3cf` - build s3 specific version of page
-`grunt serve` - serve `./dist` on http://localhost:9000. Watch html, css, js and template files triggering a rebuild on save. Livereload injection included to avoid having to use browser extensions - great for mobile.
+`grunt lambda` - build lambda specific version of page  
+`grunt s3cf` - build s3 specific version of page  
+`grunt serve` - serve `./dist` on http://localhost:9000. Watch html, css, js and template files triggering a rebuild on save. Livereload injection included to avoid having to use browser extensions - great for mobile.  
 
-`grunt exec:zip_lambda_dscouk` - Zip all files required for uploading to lambda.
-`grunt exec:upload_s3cf` - upload the s3 version of the page.
-`grunt exec:invalidate_cf - invalidate the cloudfront cache.
+
+`grunt exec:zip_lambda_dscouk` - Zip all files required for uploading to lambda.  
+`grunt exec:upload_s3cf` - upload the s3 version of the page.  
+`grunt exec:invalidate_cf - invalidate the cloudfront cache.  
 
 ### CircleCI
 Circle CI uses a customised Docker image with Terraform and the AWS CLI installed. 
