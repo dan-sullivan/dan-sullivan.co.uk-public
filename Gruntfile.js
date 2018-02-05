@@ -2,6 +2,10 @@ module.exports = function(grunt) {
   var serveStatic = require("serve-static"); // used in livereload middleware for connect
     grunt.initConfig({
         infraSvg: grunt.file.read("src/images/dscouk-infra-css.svg"),
+        emailIconSvg: grunt.file.read("src/images/iconmonstr-email.svg"),
+        linkedinIconSvg: grunt.file.read("src/images/iconmonstr-linkedin.svg"),
+        githubIconSvg: grunt.file.read("src/images/iconmonstr-github.svg"),
+        dockerIconSvg: grunt.file.read("src/images/fontawesome-docker.svg"),
         lambdaThisSite: grunt.file.read("src/templates/lambda-thissite.tpl"),
         s3cfThisSite: grunt.file.read("src/templates/s3cf-thissite.tpl"),
         localThisSite: grunt.file.read("src/templates/local-thissite.tpl"),
@@ -53,6 +57,10 @@ module.exports = function(grunt) {
                 "title": "Dan Sullivan",
                 "infrasvg": "<%= infraSvg %>",
                 "thissite": "<%= localThisSite %>",
+                "emailIconSvg": "<%= emailIconSvg %>",
+                "linkedinIconSvg": "<%= linkedinIconSvg %>",
+                "githubIconSvg": "<%= githubIconSvg %>",
+                "dockerIconSvg": "<%= dockerIconSvg %>",
               }
             },
             files: {
@@ -65,6 +73,10 @@ module.exports = function(grunt) {
                 "title": "Dan Sullivan",
                 "infrasvg": "<%= infraSvg %>",
                 "thissite": "<%= lambdaThisSite %>",
+                "emailIconSvg": "<%= emailIconSvg %>",
+                "linkedinIconSvg": "<%= linkedinIconSvg %>",
+                "githubIconSvg": "<%= githubIconSvg %>",
+                "dockerIconSvg": "<%= dockerIconSvg %>",
               }
             },
             files: {
@@ -77,6 +89,10 @@ module.exports = function(grunt) {
                 "title": "Dan Sullivan",
                 "infrasvg": "<%= infraSvg %>",
                 "thissite": "<%= s3cfThisSite %>",
+                "emailIconSvg": "<%= emailIconSvg %>",
+                "linkedinIconSvg": "<%= linkedinIconSvg %>",
+                "githubIconSvg": "<%= githubIconSvg %>",
+                "dockerIconSvg": "<%= dockerIconSvg %>",
               }
             },
             files: {

@@ -1,1 +1,1 @@
-<p>Served by AWS Cloudfront with an S3 origin, Infrastructure built with Terraform, CI by Circle CI. <a href="https://github.com/dan-sullivan/dan-sullivan.co.uk">Details on Github</a>.</p>
+This page is served by AWS Cloudfront with an S3 origin. All infrastructure built with Terraform, Continuous Integration and deployments automated with a CircleCI and Github Integration and a development flow wrapped up with Grunt.

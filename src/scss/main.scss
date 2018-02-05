@@ -1,3 +1,7 @@
+
+@import "base/solarized";
+
+
 .marg-10-top {
   margin-top: 10%;
 }
@@ -27,6 +31,28 @@
 .typed, .typed-cursor {
   font-size: 6vw;
 }
+
+a {
+  color: $blue;
+  text-decoration: none;
+}
+.contact svg {
+  fill: $base00;
+  height: 24px;
+  width: 24px;
+}
+
+.contact div {
+  display: flex;
+  height: 30px;
+  align-items: center;
+}
+
+.contact span {
+  margin: 5px;
+  display: inline-block;
+}
+
 
 // Larger than mobile - switch div order for side by side infra and name
 @media ("min-width: 420px") {
