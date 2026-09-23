@@ -86,7 +86,7 @@ jobs:
             if [ "$CIRCLE_BRANCH" = "master" ]; then
               cd terraform/core
               terraform init -input=false
-              DIST_ID=$(terraform output cloudfront_id)
+              DIST_ID=$(terraform output -raw cloudfront_id)
               aws cloudfront create-invalidation --distribution-id "$DIST_ID" --paths "/*"
             fi
 
