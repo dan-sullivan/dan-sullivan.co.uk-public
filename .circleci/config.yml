@@ -1,48 +1,96 @@
-# Javascript Node CircleCI 2.0 configuration file
+# dan-sullivan.co.uk — CircleCI 2.1 pipeline
 #
-# Check https://circleci.com/docs/2.0/language-javascript/ for more details
-#
-version: 2
-jobs:
-  build:
-    docker:
-      # specify the version you desire here
-      - image: dansullivan/dan-sullivan.co.uk:0.0.2
-      
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/mongo:3.4.4
+# Modernised Sep 2026: replaced the 2018-era custom Docker image (node 7,
+# terraform 0.10.6, python2 awscli) with a standard cimg/node + inline
+# terraform/awscli install. The repo's Terraform is now 1.x (HCL2).
+version: 2.1
 
+executors:
+  node:
+    docker:
+      - image: cimg/node:20.20
     working_directory: ~/repo
 
+jobs:
+  build:
+    executor: node
     steps:
       - checkout
 
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-          - v1-dependencies-{{ checksum "package.json" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
+      # Install build tooling
+      - run:
+          name: System deps (zip/unzip/curl)
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y zip unzip curl
 
-      - run: echo "Running..."
-      - run: sudo yarn global add grunt-cli
-      - run: yarn install
-      - run: grunt lambda
-      - run: grunt exec:zip_lambda_dscouk
-      - run: if [[ ! -z $CIRCLE_PULL_REQUEST ]] ; then cd terraform; terraform init; if ! terraform workspace new pr${CIRCLE_PULL_REQUEST##*/}; then terraform workspace select pr${CIRCLE_PULL_REQUEST##*/}; fi; terraform plan && terraform apply; fi
-      - run: if [ $CIRCLE_BRANCH = 'master' ]; then cd terraform; terraform init; terraform plan && terraform apply; fi
-      - run: grunt s3cf
-      - run: if [[ ! -z $CIRCLE_PULL_REQUEST ]] ; then BRANCH_PR=pr${CIRCLE_PULL_REQUEST##*/}; else BRANCH_PR=$CIRCLE_BRANCH; fi; grunt exec:upload_s3cf:$BRANCH_PR
-      - run: if [ $CIRCLE_BRANCH = 'master' ]; then grunt exec:invalidate_cf; fi
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+      # Node deps
+      - run: npm install --no-audit --no-fund
+
+      # Build the Lambda + S3 variants of the site
+      - run: npx grunt lambda
+      - run: npx grunt exec:zip_lambda_dscouk
+      - run: npx grunt s3cf
+
+      # Deploy tooling: Terraform 1.x + AWS CLI v2
+      - run:
+          name: Install terraform + aws cli
+          command: |
+            curl -fsSL -o /tmp/tf.zip "https://releases.hashicorp.com/terraform/1.9.8/terraform_1.9.8_linux_amd64.zip"
+            sudo unzip -o /tmp/tf.zip -d /usr/local/bin
+            curl -fsSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o /tmp/awscliv2.zip
+            unzip -q /tmp/awscliv2.zip -d /tmp && sudo /tmp/aws/install --update
+
+      # Infra: PR preview environments (served at /prN/). Plan-then-apply the saved plan.
+      - run:
+          name: Infra - PR preview
+          command: |
+            if [ -n "$CIRCLE_PULL_REQUEST" ]; then
+              cd terraform
+              terraform init -input=false
+              terraform workspace new "pr${CIRCLE_PULL_REQUEST##*/}" 2>/dev/null || \
+                terraform workspace select "pr${CIRCLE_PULL_REQUEST##*/}"
+              terraform plan -input=false -out=tfplan
+              terraform apply -input=false tfplan
+            fi
+
+      # Infra: production (master). First real run performs the one-time state
+      # v3->v4 + provider-address migration; review it before the first apply.
+      - run:
+          name: Infra - master
+          command: |
+            if [ "$CIRCLE_BRANCH" = "master" ]; then
+              cd terraform
+              terraform init -input=false
+              terraform plan -input=false -out=tfplan
+              terraform apply -input=false tfplan
+            fi
+
+      # Publish the static site to S3 (master -> s3/, PR -> prN/prN/s3/)
+      - run:
+          name: Publish S3
+          command: |
+            if [ "$CIRCLE_BRANCH" = "master" ]; then
+              DEST="s3"
+            elif [ -n "$CIRCLE_PULL_REQUEST" ]; then
+              DEST="pr${CIRCLE_PULL_REQUEST##*/}/${CIRCLE_PULL_REQUEST##*/}/s3"
+            else
+              DEST="$CIRCLE_BRANCH"
+            fi
+            aws s3 sync --region eu-west-2 ./dist/ "s3://dan-sullivan.co.uk/${DEST}"
+
+      # Invalidate CloudFront on production deploys
+      - run:
+          name: Invalidate CloudFront (master)
+          command: |
+            if [ "$CIRCLE_BRANCH" = "master" ]; then
+              cd terraform/core
+              terraform init -input=false
+              DIST_ID=$(terraform output cloudfront_id)
+              aws cloudfront create-invalidation --distribution-id "$DIST_ID" --paths "/*"
+            fi
 
 workflows:
-  version: 2
   build:
     jobs:
       - build

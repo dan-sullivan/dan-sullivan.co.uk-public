@@ -11,33 +11,28 @@ module.exports = function(grunt) {
         localThisSite: grunt.file.read("src/templates/local-thissite.tpl"),
 				clean: ["dist/", ".tmp/"],
         sass: {
-					dist: {
-						options: {
-							style: "expanded"
-						},
-						files: {
-							"dist/css/skeleton.css": "src/scss/skeleton.scss",
-							"dist/css/main.css": "src/scss/main.scss",
-							"dist/css/infrasvg.css": "src/scss/dscouk-lambda.scss"
-						}
-					},
-					lambda: {
-						options: {
-							style: "expanded"
-						},
-						files: {
-							"dist/css/infrasvg.css": "src/scss/dscouk-lambda.scss"
-						}
-					},
-					s3cf: {
-						options: {
-							style: "expanded"
-						},
-						files: {
-							"dist/css/infrasvg.css": "src/scss/dscouk-s3cf.scss"
-						}
-					}
-        },
+                    options: {
+                        implementation: require("sass"),
+                        outputStyle: "expanded"
+                    },
+                    dist: {
+                        files: {
+                            "dist/css/skeleton.css": "src/scss/skeleton.scss",
+                            "dist/css/main.css": "src/scss/main.scss",
+                            "dist/css/infrasvg.css": "src/scss/dscouk-lambda.scss"
+                        }
+                    },
+                    lambda: {
+                        files: {
+                            "dist/css/infrasvg.css": "src/scss/dscouk-lambda.scss"
+                        }
+                    },
+                    s3cf: {
+                        files: {
+                            "dist/css/infrasvg.css": "src/scss/dscouk-s3cf.scss"
+                        }
+                    }
+                },
 				browserify: { // bundle javascript for use
 					dist: {
 						src: "src/js/index.js",

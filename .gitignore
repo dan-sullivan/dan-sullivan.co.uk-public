@@ -12,6 +12,7 @@ node_modules/
 .tmp/
 dist/
 .terraform*
+!.terraform.lock.hcl
 terraform.*
 *venv
 *.zip
